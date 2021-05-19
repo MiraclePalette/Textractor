@@ -7,7 +7,7 @@ extern const wchar_t* TRANSLATION_ERROR;
 extern Synchronized<std::wstring> translateTo, translateFrom, authKey;
 
 const char* TRANSLATION_PROVIDER = "DeepL Translate";
-const char* GET_API_KEY_FROM = "https://www.deepl.com/pro.html";
+const char* GET_API_KEY_FROM = "https://api-free.deepl.com";
 QStringList languages
 {
 	"Chinese: ZH",
@@ -37,16 +37,16 @@ std::pair<bool, std::wstring> Translate(const std::wstring& text)
 		std::string translateFromComponent = translateFrom.Copy() == autoDetectLanguage ? "" : "&source_lang=" + WideStringToString(translateFrom.Copy());
 		if (HttpRequest httpRequest{
 			L"Mozilla/5.0 Textractor",
-			L"api.deepl.com",
+			L"api-free.deepl.com",
 			L"POST",
-			keyType == CAT ? L"/v1/translate" : L"/v2/translate",
+			L"/v2/translate",
 			FormatString("text=%S&auth_key=%S&target_lang=%S", Escape(text), authKey.Copy(), translateTo.Copy()) + translateFromComponent,
 			L"Content-Type: application/x-www-form-urlencoded"
 		}; httpRequest && (!httpRequest.response.empty() || (httpRequest = HttpRequest{
 			L"Mozilla/5.0 Textractor",
-			L"api.deepl.com",
+			L"api-free.deepl.com",
 			L"POST",
-			(keyType = !keyType) == CAT ? L"/v1/translate" : L"/v2/translate",
+			L"/v2/translate",
 			FormatString("text=%S&auth_key=%S&target_lang=%S", Escape(text), authKey.Copy(), translateTo.Copy()) + translateFromComponent,
 			L"Content-Type: application/x-www-form-urlencoded"
 		})))
